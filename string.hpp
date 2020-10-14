@@ -20,12 +20,10 @@ namespace Kronos{
             str = 0;
         }
         String(const String& str) : m_size(str.m_size){
-            puts("Copied\n");
             m_string = new char[str.m_size + 1];
             memcpy(m_string, str.m_string, str.m_size);
         }
         String(String&& other) : m_size(other.m_size) {
-            puts("Moved");
             m_string = other.m_string;
             other.m_size = 0;
             other.m_string = 0;
