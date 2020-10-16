@@ -2,7 +2,7 @@
 #define __STRING_HPP__
 #include<cstring>
 #include<ostream>
-namespace Kronos{
+namespace Chronos{
     class String{
         private:
         char* m_string;

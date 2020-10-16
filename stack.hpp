@@ -1,7 +1,7 @@
 #ifndef __STACK_HPP__
 #define __STACK_HPP__
 #include<ostream>
-namespace Kronos{
+namespace Chronos{
     template<typename T, int Size>
     class Stack{
         private:

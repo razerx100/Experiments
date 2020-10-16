@@ -2,7 +2,7 @@
 #define __MY_EXCEPTIONS__
 #include<stdexcept>
 #include"string.hpp"
-namespace Kronos{
+namespace Chronos{
     class RangeException: public std::exception{
         const char* name;
         public:
