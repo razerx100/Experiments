@@ -1,5 +1,6 @@
 #ifndef __LINKED_LIST_HPP__
 #define __LINKED_LIST_HPP__
+#include<ostream>
 namespace Chronos{
     template<typename T>
     class Node{
@@ -7,6 +8,10 @@ namespace Chronos{
         T value;
         Node<T> *next, *previous;
         Node(T value) : value(value), next(0), previous(0) {}
+        friend std::ostream& operator<<(std::ostream& out, const Node<T>& item){
+            out << item.value;
+            return out;
+        }
     };
     template<typename T>
     class ListIterator{
@@ -45,6 +50,14 @@ namespace Chronos{
         using Valuetype = T;
         using Iterator = ListIterator<List<T>>;
         List() : head(0), tail(0) {}
+        ~List(){
+            Node<T>* temp = 0;
+            for(Node<T>* i = head; i != 0; i=i->next){
+                delete temp;
+                temp = i;
+            }
+            delete temp;
+        }
         void push_back(T value){
             Node<T> *new_item = new Node<T>(value);
             if(!head){
@@ -97,11 +110,39 @@ namespace Chronos{
                 delete temp;
             }
         }
+        void pop(T value){
+            for(Node<T>* i = head; i != nullptr; i=i->next){
+                if(i->value == value){
+                    if(i->previous){
+                        if(i->next){
+                            i->previous->next = i->next;
+                            i->next->previous = i->previous;
+                        }
+                        else{
+                            i->previous->next = 0;
+                            tail = i->previous;
+                        }
+                    }
+                    else{
+                        if(i->next){
+                            i->next->previous = 0;
+                            head = i->next;
+                        }
+                        else
+                            head = tail = 0;
+                    }
+                    delete i;
+                }
+            }
+        }
         Iterator begin(){
             return Iterator(head);
         }
         Iterator end(){
-            return Iterator(tail->next);
+            if(tail)
+                return Iterator(tail->next);
+            else
+                return Iterator(tail);
         }
     };
 }
