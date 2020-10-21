@@ -3,12 +3,12 @@
 #include<ostream>
 namespace Chronos{
     template<typename T>
-    class Node{
+    class ListNode{
         public:
         T value;
-        Node<T> *next, *previous;
-        Node(T value) : value(value), next(0), previous(0) {}
-        friend std::ostream& operator<<(std::ostream& out, const Node<T>& item){
+        ListNode<T> *next, *previous;
+        ListNode(T value) : value(value), next(0), previous(0) {}
+        friend std::ostream& operator<<(std::ostream& out, const ListNode<T>& item){
             out << item.value;
             return out;
         }
@@ -18,13 +18,13 @@ namespace Chronos{
         public:
         using ValueType = typename T::Valuetype;
         private:
-        Node<ValueType>* m_ptr;
+        ListNode<ValueType>* m_ptr;
         public:
-        ListIterator(Node<ValueType>* ptr) : m_ptr(ptr) {}
-        Node<ValueType>* operator->(){
+        ListIterator(ListNode<ValueType>* ptr) : m_ptr(ptr) {}
+        ListNode<ValueType>* operator->(){
             return m_ptr;
         }
-        Node<ValueType>& operator*(){
+        ListNode<ValueType>& operator*(){
             return *m_ptr;
         }
         ListIterator& operator++(){
@@ -45,21 +45,21 @@ namespace Chronos{
     template<typename T>
     class List{
         private:
-        Node<T> *head, *tail;
+        ListNode<T> *head, *tail;
         public:
         using Valuetype = T;
         using Iterator = ListIterator<List<T>>;
         List() : head(0), tail(0) {}
         ~List(){
-            Node<T>* temp = 0;
-            for(Node<T>* i = head; i != 0; i=i->next){
+            ListNode<T>* temp = 0;
+            for(ListNode<T>* i = head; i != 0; i=i->next){
                 delete temp;
                 temp = i;
             }
             delete temp;
         }
         void push_back(T value){
-            Node<T> *new_item = new Node<T>(value);
+            ListNode<T> *new_item = new ListNode<T>(value);
             if(!head){
                 head = tail = new_item;
             }
@@ -70,7 +70,7 @@ namespace Chronos{
             }
         }
         void push_front(T value){
-            Node<T> *new_item = new Node<T>(value);
+            ListNode<T> *new_item = new ListNode<T>(value);
             if(!head){
                 head = tail = new_item;
             }
@@ -84,7 +84,7 @@ namespace Chronos{
         T front(){return head->value;}
         void pop_back(){
             if(head){
-                Node<T> *temp;
+                ListNode<T> *temp;
                 if(head->next){
                     temp = tail;
                     tail = tail->previous;
@@ -98,7 +98,7 @@ namespace Chronos{
         }
         void pop_front(){
             if(head){
-                Node<T> *temp;
+                ListNode<T> *temp;
                 if(head->next){
                     temp = head;
                     head = head->next;
@@ -111,7 +111,7 @@ namespace Chronos{
             }
         }
         void pop(T value){
-            for(Node<T>* i = head; i != nullptr; i=i->next){
+            for(ListNode<T>* i = head; i != nullptr; i=i->next){
                 if(i->value == value){
                     if(i->previous){
                         if(i->next){
