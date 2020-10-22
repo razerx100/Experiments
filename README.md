@@ -1,2 +1,2 @@
 # My weird codes
-# Namespace Chronos
+Namespace Chronos
