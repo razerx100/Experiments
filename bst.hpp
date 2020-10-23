@@ -15,6 +15,17 @@ namespace Chronos{
     class BstIterator{
         private:
         BstNode* m_ptr;
+        BstNode* go_up(BstNode* var){
+            if(var->parent){
+                do{
+                    var = var->parent;
+                    if(!var)
+                        break;
+                }
+                while(var->value < m_ptr->value);
+            }
+            return var;
+        }
         public:
         BstIterator(BstNode* ptr) : m_ptr(ptr) {}
         BstNode& operator*(){
@@ -30,10 +41,20 @@ namespace Chronos{
             return m_ptr != other.m_ptr;
         }
         BstIterator& operator++(){
-            //TO DO
-        }
-        BstIterator& operator--(){
-            //TO DO
+            BstNode* var = m_ptr;
+            if(var->right_child){
+                if(var->right_child->value > m_ptr->value){
+                    var = var->right_child;
+                    while(var->left_child)
+                        var = var->left_child;
+                }
+                else
+                    var = go_up(var);
+            }
+            else
+                var = go_up(var);
+            m_ptr = var;
+            return *this;
         }
     };
     class Bst{
@@ -159,11 +180,23 @@ namespace Chronos{
             }
             delete node;
         }
+        BstNode* Smallest(){
+            BstNode* var = root;
+            while(var->left_child)
+                var = var->left_child;
+            return var;
+        }
+        BstNode* Largest(){
+            BstNode* var = root;
+            while(var->right_child)
+                var = var->right_child;
+            return var;
+        }
         Iterator begin(){
-            //TO DO
+            return Iterator(Smallest());
         }
         Iterator end(){
-            //TO DO
+            return Iterator(root->parent);
         }
     };
 }
