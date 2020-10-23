@@ -1,6 +1,6 @@
 #ifndef __BST_HPP__
 #define __BST_HPP__
-#include<iostream>
+#include<ostream>
 namespace Chronos{
     class BstNode{
         public:
