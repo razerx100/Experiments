@@ -1,21 +1,11 @@
 #ifndef __BST_HPP__
 #define __BST_HPP__
-#include<ostream>
+#include"binaryTreeNode.hpp"
 namespace Chronos{
-    class BstNode{
-        public:
-        int value;
-        BstNode *left_child, *right_child, *parent;
-        BstNode(int value) : value(value), left_child(0), right_child(0), parent(0) {}
-        friend std::ostream& operator<<(std::ostream& out, const BstNode& other){
-            out << other.value;
-            return out;
-        }
-    };
     class BstIterator{
         private:
-        BstNode* m_ptr;
-        BstNode* go_up(BstNode* var){
+        BTNode* m_ptr;
+        BTNode* go_up(BTNode* var){
             if(var->parent){
                 do{
                     var = var->parent;
@@ -27,11 +17,11 @@ namespace Chronos{
             return var;
         }
         public:
-        BstIterator(BstNode* ptr) : m_ptr(ptr) {}
-        BstNode& operator*(){
+        BstIterator(BTNode* ptr) : m_ptr(ptr) {}
+        BTNode& operator*(){
             return *m_ptr;
         }
-        BstNode* operator->(){
+        BTNode* operator->(){
             return m_ptr;
         }
         bool operator==(const BstIterator& other) const {
@@ -41,7 +31,7 @@ namespace Chronos{
             return m_ptr != other.m_ptr;
         }
         BstIterator& operator++(){
-            BstNode* var = m_ptr;
+            BTNode* var = m_ptr;
             if(var->right_child){
                 if(var->right_child->value > m_ptr->value){
                     var = var->right_child;
@@ -59,13 +49,13 @@ namespace Chronos{
     };
     class Bst{
         private:
-        BstNode *root;
-        void recursive_insert(BstNode* node, int value){
+        BTNode *root;
+        void recursive_insert(BTNode* node, int value){
             if(value < node->value){
                 if(node->left_child)
                     recursive_insert(node->left_child, value);
                 else{
-                    BstNode *var = new BstNode(value);
+                    BTNode *var = new BTNode(value);
                     node->left_child = var;
                     var->parent = node;
                 }
@@ -74,13 +64,13 @@ namespace Chronos{
                 if(node->right_child)
                     recursive_insert(node->right_child, value);
                 else{
-                    BstNode *var = new BstNode(value);
+                    BTNode *var = new BTNode(value);
                     node->right_child = var;
                     var->parent = node;
                 }
             }
         }
-        BstNode* search(int value, BstNode *node){
+        BTNode* search(int value, BTNode *node){
             if(value < node->value){
                 if(node->left_child)
                     return search(value, node->left_child);
@@ -94,7 +84,7 @@ namespace Chronos{
             }
             return 0;
         }
-        void insert_branch(BstNode* root, BstNode* node){
+        void insert_branch(BTNode* root, BTNode* node){
             if(root->value > node->value){
                 if(root->left_child)
                     insert_branch(root->left_child, node);
@@ -112,11 +102,21 @@ namespace Chronos{
                 }
             }
         }
+        void post_delete(BTNode* node){
+            if(node){
+                post_delete(node->left_child);
+                post_delete(node->right_child);
+                delete node;
+            }
+        }
         public:
         Bst() : root(0) {}
+        ~Bst(){
+            post_delete(root);
+        }
         using Iterator = BstIterator;
         void Insert(int value){
-            BstNode *var = new BstNode(value);
+            BTNode *var = new BTNode(value);
             if(!root){
                 root = var;
             }
@@ -124,15 +124,18 @@ namespace Chronos{
                 recursive_insert(root, value);
             }
         }
+        bool Search(int value){
+            return search(value, root) != nullptr;
+        }
         void Delete(int value){
-            BstNode *node = search(value, root);
+            BTNode *node = search(value, root);
             if(node->left_child and node->right_child){
                 if(node == root){
                     root = node->right_child;
                     root->parent = 0;
                 }
                 else{
-                    BstNode* ptr = node->parent;
+                    BTNode* ptr = node->parent;
                     if(node == ptr->left_child){
                         ptr->left_child = node->right_child;
                         node->right_child->parent = ptr;
@@ -169,7 +172,7 @@ namespace Chronos{
                     root = 0;
                 }
                 else{
-                    BstNode *ptr = node->parent;
+                    BTNode *ptr = node->parent;
                     if(node == ptr->left_child){
                         ptr->left_child = 0;
                     }
@@ -180,14 +183,14 @@ namespace Chronos{
             }
             delete node;
         }
-        BstNode* Smallest(){
-            BstNode* var = root;
+        BTNode* Smallest(){
+            BTNode* var = root;
             while(var->left_child)
                 var = var->left_child;
             return var;
         }
-        BstNode* Largest(){
-            BstNode* var = root;
+        BTNode* Largest(){
+            BTNode* var = root;
             while(var->right_child)
                 var = var->right_child;
             return var;
