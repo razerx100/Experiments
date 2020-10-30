@@ -1,5 +1,6 @@
 #ifndef __HEAP_HPP__
 #define __HEAP_HPP__
+#include<initializer_list>
 namespace Chronos{
     template<typename T, int size>
     class Heap{
@@ -13,11 +14,11 @@ namespace Chronos{
             a = b;
             b = temp;
         }
-        public:
         Heap() : free_position(0) {}
+        public:
         int Size() { return size; }
         void Insert(T value){
-            if(free_position < size - 1){
+            if(free_position < size){
                 m_ptr[free_position] = value;
                 fix_priority_upward(free_position++);
             }
@@ -25,8 +26,7 @@ namespace Chronos{
         inline T View_root(){ return m_ptr[0]; }
         void Delete_root(){
             if(free_position){
-                m_ptr[0] = m_ptr[free_position - 1];
-                m_ptr[--free_position] = 0;
+                swap(m_ptr[0], m_ptr[--free_position]);
                 fix_priority_downward(0);
             }
         }
@@ -71,7 +71,32 @@ namespace Chronos{
         }
         public:
         MaxHeap() {}
+        MaxHeap(std::initializer_list<T> list) {
+            for(T i : list)
+                this->Insert(i);
+        }
+        static MaxHeap Heapify(T* data){
+            MaxHeap<T, size> var;
+            for(int i = 0; i < size; i++)
+                var.m_ptr[i] = data[i];
+            var.free_position = size;
+            for(int i = size; i >= 0; i-=2){
+                int position = (i - 1) / 2;
+                var.fix_priority_downward(position);
+            }
+            return var;
+        }
+        template<typename E, int length>
+        friend void Heapsort(E* data);
     };
+    template<typename T, int length>
+    void Heapsort(T* data){
+        MaxHeap<T, length> var = MaxHeap<T, length>::Heapify(data);
+        for(int i = 0; i < length; i++)
+            var.Delete_root();
+        for(int i = 0; i < length; i++)
+            data[i] = var.m_ptr[i];
+    }
     template<typename T, int size>
     class MinHeap : public Heap<T, size> {
         private:
@@ -111,6 +136,21 @@ namespace Chronos{
         }
         public:
         MinHeap() {}
+        MinHeap(std::initializer_list<T> list) {
+            for(T i : list)
+                this->Insert(i);
+        }
+        static MinHeap Heapify(T* data){
+            MinHeap<T, size> var;
+            for(int i = 0; i < size; i++)
+                var.m_ptr[i] = data[i];
+            var.free_position = size;
+            for(int i = size; i >= 0; i-=2){
+                int position = (i - 1) / 2;
+                var.fix_priority_downward(position);
+            }
+            return var;
+        }
     };
 }
 #endif
